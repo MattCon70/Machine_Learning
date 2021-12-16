@@ -1,0 +1,24 @@
+[ec2-user@ip-172-31-10-128 ~]$ sudo yum install tmux
+[ec2-user@ip-172-31-10-128 ~]$ tmux new -s flaskapp yeni session acilir
+ctrl+B D ile logout yapilir sonlandirilir
+[ec2-user@ip-172-31-10-128 ~]$ tmux ls
+[ec2-user@ip-172-31-10-128 ~]$ tmux attach -t flaskapp ile icine girilir
+[ec2-user@ip-172-31-10-128 ~]$ tmux kill-session -t flask
+
+
+
+[ec2-user@ip-172-31-10-128 ~]$ docker images
+REPOSITORY             TAG       IMAGE ID       CREATED       SIZE
+ubuntufromdockerfile   latest    db42a2b1e341   3 hours ago   773MB
+nginx                  latest    ea335eea17ab   13 days ago   141MB
+[ec2-user@ip-172-31-10-128 ~]$ ls
+Dockerfile  fromgithub  inclass
+[ec2-user@ip-172-31-10-128 ~]$ cd fromgithub/
+[ec2-user@ip-172-31-10-128 fromgithub]$ ls
+Dockerfile
+[ec2-user@ip-172-31-10-128 fromgithub]$ docker build -t ubuntuimagefromgithub/requirements .
+Successfully tagged ubuntuimagefromgithub/requirements:latest
+[ec2-user@ip-172-31-10-128 fromgithub]$ 
+
+Flask : python3 app.py
+Streamlit : streamlit run app.py
