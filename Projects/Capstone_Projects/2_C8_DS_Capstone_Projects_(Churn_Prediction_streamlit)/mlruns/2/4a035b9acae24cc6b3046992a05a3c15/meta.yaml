@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/tuseb.000/Documents/GitHub/Machine_Learning/Projects/Capstone_Projects/2_C8_DS_Capstone_Projects_%28Churn_Prediction_streamlit%29/mlruns/2/4a035b9acae24cc6b3046992a05a3c15/artifacts
+end_time: 1639463884093
+entry_point_name: ''
+experiment_id: '2'
+lifecycle_stage: active
+name: ''
+run_id: 4a035b9acae24cc6b3046992a05a3c15
+run_uuid: 4a035b9acae24cc6b3046992a05a3c15
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1639463883631
+status: 3
+tags: []
+user_id: Burak

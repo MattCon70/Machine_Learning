@@ -1,0 +1,505 @@
+-system update first
+[ec2-user@ip-172-31-10-128 ~]$ sudo yum update
+
+-install docker 
+[ec2-user@ip-172-31-10-128 ~]$ sudo amazon-linux-extras install docker -y
+
+-start docker with system control
+[ec2-user@ip-172-31-10-128 ~]$ sudo systemctl start docker
+
+-check docker status
+[ec2-user@ip-172-31-10-128 ~]$ sudo systemctl status docker
+	● docker.service - Docker Application Container Engine
+
+-in each reboot can machine auto enable
+[ec2-user@ip-172-31-10-128 ~]$ sudo systemctl enable docker  
+	Created symlink from /etc/systemd/system/multi-user.target.
+	wants/docker.service to /usr/lib/systemd/system/docker.service.
+
+[ec2-user@ip-172-31-10-128 ~]$ sudo systemctl status docker
+	● docker.service - Docker Application Container Engine
+   	Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)
+   	Active: active (running) since Tue 2021-11-30 07:15:55 UTC; 2min 24s ago
+
+-check docker version
+[ec2-user@ip-172-31-10-128 ~]$ docker --version
+	Docker version 20.10.7, build f0df350
+
+-Process Status(ps)
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker ps
+	Got permission denied while trying to connect to the Docker daemon socket at 
+	unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/containers/json": 
+	dial unix /var/run/docker.sock: connect: permission denied
+
+-give root access
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker ps
+	CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+-to avoid always root access and write sudo; -aG(allgrup)
+[ec2-user@ip-172-31-10-128 ~]$ sudo usermod -aG docker ec2-user
+[ec2-user@ip-172-31-10-128 ~]$ newgrp docker
+
+-show all running machines
+[ec2-user@ip-172-31-10-128 ~]$ docker ps  
+	CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+-show all machines
+[ec2-user@ip-172-31-10-128 ~]$ docker ps -a  
+	CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+-now sign up/sign in https://hub.docker.com/
+
+-pull docker a docker image from hub,default tag is latest(docker pull ubuntu:latest or docker pull ubuntu:versionnumber)
+[ec2-user@ip-172-31-10-128 ~]$ docker pull ubuntu  
+	Using default tag: latest
+	latest: Pulling from library/ubuntu
+	Profile: default
+	Kernel Version: 5.10.75-79.358.amzn2.x86_64
+ 	Operating System: Amazon Linux 2
+ 	OSType: linux
+
+-check docker images
+[ec2-user@ip-172-31-10-128 ~]$ docker images
+
+-run/install/start container
+[ec2-user@ip-172-31-10-128 ~]$ docker run -it --name ubuntu20.4 ubuntu 
+	root@430582debb19:/#
+
+root@430582debb19:/# apt-get update -y
+
+-to check control the running machines open an other terminal which has already docker repo
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker ps 
+	CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS         PORTS     NAMES
+	430582debb19   ubuntu    "bash"    2 minutes ago   Up 2 minutes             ubuntu20.04
+
+-install python3 and pip3
+root@430582debb19:/# python --version
+	bash: python: command not found
+root@430582debb19:/# python3  --version
+	bash: python3: command not found
+root@430582debb19:/# apt-get install  python3
+root@430582debb19:/# apt-get install  python3-pip
+root@430582debb19:/# python3 --version
+	Python 3.8.10
+root@430582debb19:/# pip3 --version
+	pip 20.0.2 from /usr/lib/python3/dist-packages/pip (python 3.8)
+
+-we can install a library
+root@430582debb19:/# pip3 install numpy
+
+root@430582debb19:/# hostname -I
+	172.17.0.2 
+
+-in another terminal control the network
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker network ls
+	NETWORK ID     NAME      DRIVER    SCOPE
+	155afe32f543   bridge    bridge    local
+	0ec05eeb274c   host      host      local
+	d5b14b53d68e   none      null      local
+
+-inspect to networks
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker network inspect 155afe32f543
+[
+    {
+        "Name": "bridge",
+        "Id": "155afe32f54332274a289f14e644685906e34560e28eee027ab62bf290715474",
+        "Created": "2021-11-30T07:15:55.771720615Z",
+
+
+-inspect to networks
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker network inspect 0ec05eeb274c
+[
+    {
+        "Name": "host",
+        "Id": "0ec05eeb274cb4020f54e1faa051384e02896463315d2acaa15f0176bcd9c022",
+
+-check internet connection in your computer
+[ec2-user@ip-172-31-10-128 ~]$ ping -c 4 172.31.10.128
+	PING 172.31.10.128 (172.31.10.128) 56(84) bytes of data.
+	64 bytes from 172.31.10.128: icmp_seq=1 ttl=64 time=0.030 ms
+	64 bytes from 172.31.10.128: icmp_seq=2 ttl=64 time=0.047 ms
+	64 bytes from 172.31.10.128: icmp_seq=3 ttl=64 time=0.035 ms
+	64 bytes from 172.31.10.128: icmp_seq=4 ttl=64 time=0.040 ms
+
+-check internet connection between your computer and docker container
+[ec2-user@ip-172-31-10-128 ~]$ ping -c 4 172.17.0.2  # to 2nd machine
+	PING 172.17.0.2 (172.17.0.2) 56(84) bytes of data.
+	64 bytes from 172.17.0.2: icmp_seq=1 ttl=64 time=0.055 ms
+	64 bytes from 172.17.0.2: icmp_seq=2 ttl=64 time=0.046 ms
+	64 bytes from 172.17.0.2: icmp_seq=3 ttl=64 time=0.036 ms
+	64 bytes from 172.17.0.2: icmp_seq=4 ttl=64 time=0.042 ms
+
+	--- 172.17.0.2 ping statistics ---
+	4 packets transmitted, 4 received, 0% packet loss, time 3078ms
+	rtt min/avg/max/mdev = 0.036/0.044/0.055/0.010 ms
+
+-to exit from docker container
+root@430582debb19:/# exit
+	exit
+[ec2-user@ip-172-31-10-128 ~]$ 
+
+-run nginx webserver container # d:detach mod p:port 80:80 name:webserver
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker run -it -d --name webserver -p 80:80 nginx  
+	Unable to find image 'nginx:latest' locally
+	latest: Pulling from library/nginx
+	eff15d958d66: Pull complete 
+	1e5351450a59: Pull complete 
+	2df63e6ce2be: Pull complete 
+	9171c7ae368c: Pull complete 
+	020f975acd28: Pull complete 
+	266f639b35ad: Pull complete 
+	Digest: sha256:097c3a0913d7e3a5b01b6c685a60c03632fc7a2b50bc8e35bcaa3691d788226e
+	Status: Downloaded newer image for nginx:latest
+	4683dd1a7ad5b851cc8a09715ce7d6e18d7da578088a219c181213db66cd1b19
+
+-ps
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker ps
+	CONTAINER ID   IMAGE     COMMAND                  CREATED              STATUS              PORTS                               NAMES
+	4683dd1a7ad5   nginx     "/docker-entrypoint.…"   About a minute ago   Up About a minute   0.0.0.0:80->80/tcp, :::80->80/tcp   webserver
+
+-ps -a(all)
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker ps -a 
+	CONTAINER ID   IMAGE     COMMAND                  CREATED             STATUS                       PORTS                               NAMES
+	4683dd1a7ad5   nginx     "/docker-entrypoint.…"   3 minutes ago       Up 2 minutes                 0.0.0.0:80->80/tcp, :::80->80/tcp   webserver
+	430582debb19   ubuntu    "bash"                   About an hour ago   Exited (127) 3 minutes ago                                       ubuntu20.04
+
+-now webserver started to the broadcast
+-go to browser and past your public IP with port 80
+	http://18.194.37.107:80
+
+-run another nginx webserver container # d:detach mod p:port 81:80 name:webserver2
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker run -it -d --name webserver2 -p 81:80 nginx
+	4de70135743c480ff80a8f871b8273a38af80dda58ef2c109578ed95aacd3643
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker exec -it 4de bash
+	root@4de70135743c:/# 
+
+-go to browser and past your public IP with port 81
+	http://18.194.37.107:81
+
+root@4de70135743c:/# cd /usr/share/nginx/html/
+root@4de70135743c:/usr/share/nginx/html# ls -l
+	total 8
+	-rw-r--r-- 1 root root 497 Nov  2 14:49 50x.html
+	-rw-r--r-- 1 root root 615 Nov  2 14:49 index.html
+
+
+root@4de70135743c:/usr/share/nginx/html# cat index.html 
+	<!DOCTYPE html>
+	<html>
+	<head>
+	<title>Welcome to nginx!</title>
+	<style>
+	html { color-scheme: light dark; }
+	body { width: 35em; margin: 0 auto;
+	font-family: Tahoma, Verdana, Arial, sans-serif; }
+	</style>
+	</head>
+	<body>
+	<h1>Welcome to nginx!</h1>
+	<p>If you see this page, the nginx web server is successfully installed and
+	working. Further configuration is required.</p>
+
+	<p>For online documentation and support please refer to
+	<a href="http://nginx.org/">nginx.org</a>.<br/>
+	Commercial support is available at
+	<a href="http://nginx.com/">nginx.com</a>.</p>
+	<p><em>Thank you for using nginx.</em></p>
+	</body>
+	</html>
+
+root@4de70135743c:/usr/share/nginx/html# echo "<h1>Welcome to my home page, Arslan</h1>" > index.html
+	http://18.194.37.107:81
+
+root@4de70135743c:/usr/share/nginx/html# cat index.html 
+	<h1>Welcome to my home page, Arslan</h1>
+
+root@4de70135743c:/usr/share/nginx/html# exit
+	exit
+[ec2-user@ip-172-31-10-128 ~]$ docker ps -a
+	CONTAINER ID   IMAGE     COMMAND                  CREATED             STATUS                           PORTS                               NAMES
+	4de70135743c   nginx     "/docker-entrypoint.…"   23 minutes ago      Up 23 minutes                    0.0.0.0:81->80/tcp, :::81->80/tcp   webserver3
+	36fb60861fa7   nginx     "/docker-entrypoint.…"   28 minutes ago      Up 28 minutes                    0.0.0.0:80->80/tcp, :::80->80/tcp   webserver2
+	4683dd1a7ad5   nginx     "/docker-entrypoint.…"   About an hour ago   Exited (0) 44 minutes ago                                            webserver
+	430582debb19   ubuntu    "bash"                   2 hours ago         Exited (127) About an hour ago                                       ubuntu20.04
+
+-stop machines
+[ec2-user@ip-172-31-10-128 ~]$ docker stop webserver
+	webserver
+[ec2-user@ip-172-31-10-128 ~]$ docker stop webserver2
+	webserver2
+[ec2-user@ip-172-31-10-128 ~]$ docker stop webserver3
+	webserver3
+[ec2-user@ip-172-31-10-128 ~]$ docker ps -a
+	CONTAINER ID   IMAGE     COMMAND                  CREATED             STATUS                           PORTS     NAMES
+	4de70135743c   nginx     "/docker-entrypoint.…"   25 minutes ago      Exited (0) 3 seconds ago                   webserver3
+	36fb60861fa7   nginx     "/docker-entrypoint.…"   30 minutes ago      Exited (0) 6 seconds ago                   webserver2
+	4683dd1a7ad5   nginx     "/docker-entrypoint.…"   About an hour ago   Exited (0) 46 minutes ago                  webserver
+	430582debb19   ubuntu    "bash"                   2 hours ago         Exited (127) About an hour ago             ubuntu20.04
+
+
+-remove contaniers/machines
+[ec2-user@ip-172-31-10-128 ~]$ docker rm 4de
+	4de
+[ec2-user@ip-172-31-10-128 ~]$ docker rm 36f
+	36f
+
+[ec2-user@ip-172-31-10-128 ~]$ docker ps -a
+	CONTAINER ID   IMAGE     COMMAND                  CREATED             STATUS                           PORTS     NAMES
+	4683dd1a7ad5   nginx     "/docker-entrypoint.…"   About an hour ago   Exited (0) 47 minutes ago                  webserver
+	430582debb19   ubuntu    "bash"                   2 hours ago         Exited (127) About an hour ago             ubuntu20.04
+
+[ec2-user@ip-172-31-10-128 ~]$ docker rm 468
+	468
+
+[ec2-user@ip-172-31-10-128 ~]$ docker ps -a
+	CONTAINER ID   IMAGE     COMMAND   CREATED       STATUS                           PORTS     NAMES
+	430582debb19   ubuntu    "bash"    2 hours ago   Exited (127) About an hour ago             ubuntu20.04
+
+-remove also ubuntu contanier
+[ec2-user@ip-172-31-10-128 ~]$ docker rm 430
+	430
+
+[ec2-user@ip-172-31-10-128 ~]$ docker ps -a
+	CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[ec2-user@ip-172-31-10-128 ~]$ 
+
+-to keep files permanently in contaniner
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker run -it -d ubuntu  # run ubuntu
+
+[ec2-user@ip-172-31-10-128 ~]$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS         PORTS     NAMES
+1ba031240b69   ubuntu    "bash"    4 minutes ago   Up 4 minutes             eager_bhaskara
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker volume ls
+	DRIVER    VOLUME NAME
+
+
+-switch to ubuntu
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker ps
+	CONTAINER ID   IMAGE     COMMAND   CREATED          STATUS          PORTS     NAMES
+	1ba031240b69   ubuntu    "bash"    14 minutes ago   Up 14 minutes             eager_bhaskara
+
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker exec -it 1ba031240b69  bash
+root@1ba031240b69:/# 
+
+-switch home/root
+root@1ba031240b69:/# cd
+root@1ba031240b69:~# pwd
+	/root
+
+root@1ba031240b69:~# touch testfile.txt
+root@1ba031240b69:~# ls
+	testfile.txt
+root@1ba031240b69:~# 
+
+-in aws ec2
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker volume ls
+	DRIVER    VOLUME NAME
+
+-uninstall ubunutu container without stopping
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker rm -f 1ba031240b69 
+	1ba031240b69
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker ps -a
+	CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[ec2-user@ip-172-31-10-128 ~]$ 
+
+-create volume 
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker volume create test_voltest_vol
+
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker volume ls
+	DRIVER    VOLUME NAME
+	local     test_vol
+
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker volume inspect test_vol
+[
+    {
+        "CreatedAt": "2021-11-30T12:16:40Z",
+        "Driver": "local",
+        "Labels": {},
+        "Mountpoint": "/var/lib/docker/volumes/test_vol/_data",
+        "Name": "test_vol",
+        "Options": {},
+        "Scope": "local"
+    }
+]
+
+-create a new ubuntu and put it in volume
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker ps -a
+	CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker volume ls 
+	DRIVER    VOLUME NAME
+	local     test_vol
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker run -it -d -v test_vol:/root ubuntu
+	01c38b72973c162b01e1d8981b8b18cc335c3fd7af5a964187ab5f0a8be8f54b
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker ps -a
+	CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS         PORTS     NAMES
+	01c38b72973c   ubuntu    "bash"    9 seconds ago   Up 8 seconds             vibrant_bohr
+
+-switch to new ubuntu 
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker exec -it 01c bash
+
+root@01c38b72973c:/# cd
+root@01c38b72973c:~# pwd
+	/root
+root@01c38b72973c:~# 
+
+-in root create a testfile
+root@01c38b72973c:~# ls -l
+	total 0
+root@01c38b72973c:~# touch testfile2.txt
+root@01c38b72973c:~# ls -l
+	total 0
+	-rw-r--r-- 1 root root 0 Nov 30 12:25 testfile2.txt
+root@01c38b72973c:~# 
+
+-check this file in ec2
+[ec2-user@ip-172-31-10-128 ~]$ sudo ls /var/lib/docker/volumes/test_vol/_data
+	testfile2.txt
+
+-write something to this text file in container
+root@01c38b72973c:~# echo "This line is put on container host" > testfile2.txt
+
+-check it again in ec2
+[ec2-user@ip-172-31-10-128 ~]$ sudo cat /var/lib/docker/volumes/test_vol/_data/testfile2.txt
+	This line is put on container host
+
+-kill the ubuntu 
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker ps -a
+	CONTAINER ID   IMAGE     COMMAND   CREATED          STATUS          PORTS     NAMES
+	01c38b72973c   ubuntu    "bash"    14 minutes ago   Up 14 minutes             vibrant_bohr
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker rm -f 01c
+	01c
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker ps -a
+	CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[
+
+-and control again ec2 anc check the testfile2
+[ec2-user@ip-172-31-10-128 ~]$ sudo cat /var/lib/docker/volumes/test_vol/_data/testfile2.txt
+	This line is put on container host
+[ec2-user@ip-172-31-10-128 ~]$ 
+
+-create a new docker container on ec2
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker run -it -d -v test_vol:/root ubuntu
+92433af174ae9f6b89592cdb93fc01778f64944444115625cbda0d8865095f62
+[ec2-user@ip-172-31-10-128 ~]$ 
+
+-and exec it
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED          STATUS          PORTS     NAMES
+92433af174ae   ubuntu    "bash"    17 seconds ago   Up 16 seconds             suspicious_rhodes
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker exec -it 924  bash
+root@92433af174ae:/# 
+
+-create an personal image for deployment
+-we will work with flaskapp before created
+-install libraries from requirements file
+[ec2-user@ip-172-31-10-128 inclass]$ pip install -r requirements.txt
+-run flaskapp.py on ec2 
+[ec2-user@ip-172-31-10-128 inclass]$ python3 flaskapp.py
+
+-create docker file/create your own docker image
+-Dockerfile-create a dockerfile and write and save codes below
+
+FROM ubuntu
+RUN apt-get update -y
+RUN apt-get install python3 -y
+RUN apt-get install python3-pip -y
+RUN pip3 install pandas joblib flask scikit-learn==0.23.2
+WORKDIR /inclass
+COPY . .
+CMD python3 flaskapp.py
+
+or create your own docker image with requirements file
+
+FROM ubuntu
+RUN apt-get update -y
+RUN apt-get install python3 -y
+RUN apt-get install python3-pip -y
+WORKDIR /APP
+COPY . .
+RUN pip3 install -r requirements.txt
+CMD python3 flaskapp.py
+
+-check all docker images
+[ec2-user@ip-172-31-10-128 inclass]$ docker images
+-check all containers
+[ec2-user@ip-172-31-10-128 inclass]$ sudo docker ps -a
+
+-build the image from docker file
+[ec2-user@ip-172-31-10-128 inclass]$ docker build -t ubuntufromdockerfile .
+	Successfully built db42a2b1e341
+	Successfully tagged ubuntufromdockerfile:latest
+
+-check again all images with your new one
+[ec2-user@ip-172-31-10-128 inclass]$ docker image ls
+	REPOSITORY             TAG       IMAGE ID       CREATED         SIZE
+	ubuntufromdockerfile   latest    db42a2b1e341   3 minutes ago   773MB
+	nginx                  latest    ea335eea17ab   13 days ago     141MB
+	ubuntu                 latest    ba6acccedd29   6 weeks ago     72.8MB
+[ec2-user@ip-172-31-10-128 inclass]$ 
+
+-install container from your own new image
+[ec2-user@ip-172-31-10-128 inclass]$ docker run -it -d --name ubuntufdockerfile -p 5000:5000 ubuntufromdockerfile  
+	328d2909344070672d600f2627a44966a4aa3f8ec5e50a588d67cd9a69d2f8cf
+
+-check again all containers again 
+[ec2-user@ip-172-31-10-128 inclass]$ sudo docker ps -a
+	CONTAINER ID   IMAGE                  COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+	328d29093440   ubuntufromdockerfile   "/bin/sh -c 'python3…"   12 seconds ago   Up 10 seconds   0.0.0.0:5000->5000/tcp, :::5000->5000/tcp   ubuntufdockerfile
+[ec2-user@ip-172-31-10-128 inclass]$ 
+
+-extra tipp: we could remove images from docker container at ec2
+[ec2-user@ip-172-31-10-128 ~]$ docker images
+REPOSITORY                           TAG       IMAGE ID       CREATED        SIZE
+ubuntuimagefromgithub/requirements   latest    ffff87df173b   38 hours ago   819MB
+ubuntufromdockerfile                 latest    db42a2b1e341   40 hours ago   773MB
+nginx                                latest    ea335eea17ab   2 weeks ago    141MB
+ubuntu                               latest    ba6acccedd29   6 weeks ago    72.8MB
+
+[ec2-user@ip-172-31-10-128 inclass]$ docker image rm ubuntu 
+	Untagged: ubuntu:latest
+	Untagged: ubuntu@sha256:626ffe58f6e7566e00254b638eb7e0f3b11d4da9675088f4781a50ae288f3322
+[ec2-user@ip-172-31-10-128 inclass]$ docker images
+	REPOSITORY             TAG       IMAGE ID       CREATED         SIZE
+	ubuntufromdockerfile   latest    db42a2b1e341   7 minutes ago   773MB
+	nginx                  latest    ea335eea17ab   13 days ago     141MB
+[ec2-user@ip-172-31-10-128 inclass]$ 
+
+-control running container
+[ec2-user@ip-172-31-10-128 inclass]$ sudo docker ps -a
+	CONTAINER ID   IMAGE                  COMMAND                  CREATED         STATUS         PORTS                                       NAMES
+	328d29093440   ubuntufromdockerfile   "/bin/sh -c 'python3…"   5 minutes ago   Up 5 minutes   0.0.0.0:5000->5000/tcp, :::5000->5000/tcp   ubuntufdockerfile
+[ec2-user@ip-172-31-10-128 inclass]$ 
+
+-go to browser and check your api again
+http://18.194.37.107:5000/api
+
+
+-push/login
+-docker login
+-write user name and password to login to docker hub
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker logout
+[ec2-user@ip-172-31-10-128 ~]$ sudo docker login
+-push image with a proper name, proper name should be dockerhubusername/imagename and push it to hub
+[ec2-user@ip-172-31-10-128 inclass]$ docker tag ubuntufromdockerfile evrenarslan/ubuntuflask
+[ec2-user@ip-172-31-10-128 inclass]$ docker push evrenarslan/ubuntuflask
+
+-go docker hub and find your uploaded image in docker hub
+
+-usefull commands
+docker logs  # check the reasons of problems
+docker rm containerid
+docker rm imagename
+
+-in running container
+top  # top gets ram using percentage etc. 
+
+
+-notes
+Detached mode, shown by the option --detach or -d , 
+means that a Docker container runs in the background of your terminal. 
+It does not receive input or display output. If you run containers in the background, 
+you can find out their details using docker ps and then reattach your terminal to its input and output.
+
+latest: with latest we pull the latest version of an image

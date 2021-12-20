@@ -1,0 +1,8 @@
+channels:
+- conda-forge
+dependencies:
+- pip
+- pip:
+  - mlflow
+  - pycaret==2.3.5
+name: employee_churn_model-env

@@ -1,0 +1,4 @@
+artifact_location: file:///C:/Users/tuseb.000/Documents/GitHub/Machine_Learning/Projects/Capstone_Projects/2_C8_DS_Capstone_Projects_%28Churn_Prediction_streamlit%29/mlruns/1
+experiment_id: '1'
+lifecycle_stage: active
+name: us_election_model

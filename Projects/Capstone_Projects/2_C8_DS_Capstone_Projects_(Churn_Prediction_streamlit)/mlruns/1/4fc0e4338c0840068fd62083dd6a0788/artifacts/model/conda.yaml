@@ -1,0 +1,8 @@
+channels:
+- conda-forge
+dependencies:
+- pip
+- pip:
+  - mlflow
+  - pycaret==2.3.5
+name: us_election_model-env
