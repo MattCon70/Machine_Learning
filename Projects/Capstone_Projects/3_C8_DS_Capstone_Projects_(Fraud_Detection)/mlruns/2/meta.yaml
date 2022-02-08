@@ -1,0 +1,4 @@
+artifact_location: file:///C:/Users/tuseb.000/Documents/GitHub/Machine_Learning/Projects/Capstone_Projects/3_C8_DS_Capstone_Projects_%28Fraud_Detection%29/mlruns/2
+experiment_id: '2'
+lifecycle_stage: active
+name: Creditcard Fraud Detection

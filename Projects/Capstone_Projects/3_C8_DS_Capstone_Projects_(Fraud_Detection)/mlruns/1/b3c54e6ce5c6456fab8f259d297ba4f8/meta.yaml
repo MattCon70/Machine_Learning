@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/tuseb.000/Documents/GitHub/Machine_Learning/Projects/Capstone_Projects/3_C8_DS_Capstone_Projects_%28Fraud_Detection%29/mlruns/1/b3c54e6ce5c6456fab8f259d297ba4f8/artifacts
+end_time: 1640010212990
+entry_point_name: ''
+experiment_id: '1'
+lifecycle_stage: active
+name: ''
+run_id: b3c54e6ce5c6456fab8f259d297ba4f8
+run_uuid: b3c54e6ce5c6456fab8f259d297ba4f8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1640010212500
+status: 3
+tags: []
+user_id: Burak
